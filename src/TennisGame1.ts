@@ -1,6 +1,8 @@
 import { TennisGame } from './TennisGame';
 
 export class TennisGame1 implements TennisGame {
+  //Pourquoi ne pas lier chaque score (1, 2, 3, 4) à la string
+  //correspondante ("Love", "Fifteen", "Thirty", "Forty")
   private player1Score: number = 0;
   private player2Score: number = 0;
   private player1Name: string;
@@ -12,47 +14,39 @@ export class TennisGame1 implements TennisGame {
   }
 
   wonPoint(playerName: string): void {
-    if (playerName === 'player1')
+    if (playerName === this.player1Name)
       this.player1Score += 1;
     else
       this.player2Score += 1;
   }
 
-
-
   getScore(): string {
     let score: string = '';
     let tempScore: number = 0;
-    // Cas égalité
-    if (this.player1Score === this.player2Score) {
+   if (this.isEqualScore()) {
       score = this.getEqualityScore();
     }
-    // Cas avantage / victoire
-    else if (this.player1Score >= 4 || this.player2Score >= 4) {
+    else if (this.isAdvantageScore()) {
       score = this.getAdvantageOrWinScore();
     }
-    // cas classique
     else {
-      for (let i = 1; i < 3; i++) {
-        if (i === 1) tempScore = this.player1Score;
-        else { score += '-'; tempScore = this.player2Score; }
-        switch (tempScore) {
-          case 0:
-            score += 'Love';
-            break;
-          case 1:
-            score += 'Fifteen';
-            break;
-          case 2:
-            score += 'Thirty';
-            break;
-          case 3:
-            score += 'Forty';
-            break;
-        }
-      }
+        score = this.getNormalCaseScore(this.player1Score, this.player2Score);        
     }
     return score;
+  }
+
+  private isAdvantageScore() {
+    return this.player1Score >= 4 || this.player2Score >= 4;
+  }
+
+  private isEqualScore() {
+    return this.player1Score === this.player2Score;
+  }
+
+  private getNormalCaseScore(scorePlayer1: number, scorePlayer2: number): string {
+    
+    return `${this.getTranslatedScore(scorePlayer1)}-${this.getTranslatedScore(scorePlayer2)}`;
+
   }
 
   private getAdvantageOrWinScore() {
@@ -96,4 +90,16 @@ export class TennisGame1 implements TennisGame {
     }
     return score;
   }
+  private getTranslatedScore(score: number): string {
+    let translateScore = ["Love", "Fifteen", "Thirty", "Forty"];
+    let translatedScore = "";
+    
+    if(score > 3) {
+      translatedScore = translateScore[3]
+    } else {
+      translatedScore = translateScore[score];
+    }
+    return translatedScore;
+  }
 }
+
